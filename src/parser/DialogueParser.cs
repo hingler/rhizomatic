@@ -14,40 +14,46 @@ namespace parser {
       DialogueFileReader reader = new DialogueFileReader(path);
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
-      
+    
       while (reader.hasContent()) {
         Label label = getNextLabel(reader.nextLine());
         ASTNode currentNode = label;
-        while (reader.hasContent() && currentNode is LinkingNode) {
-          LinkingNode currentLinkingNode = label as LinkingNode;
-          String line = reader.nextLine();
-          currentLinkingNode.next = parseNode(line);
+        while (reader.hasContent()) {
+          Console.WriteLine("looping");
+          LinkingNode? currentLinkingNode = currentNode as LinkingNode;
+          if (currentLinkingNode != null) {
+            String line = reader.peekLine();
+            ASTNode nextNode = parseNode(line);
+            if (nextNode is Label) {
+              break;
+            } else {
+              // assign as next node
+              reader.nextLine();
+              currentLinkingNode.next = nextNode;
+              currentNode = currentLinkingNode.next;
+            }
+
+          } else {
+            // label is complete, or we've reached the end of the file
+            break;
+          }
         }
 
-        // label is complete, or we've reached the end of the file
-        // store the label
         res.Add(label);
       }
+
 
       return res;
     }
 
     private Label getNextLabel(String line) {
       String trimLine = line.TrimStart();
-      if (!trimLine.StartsWith(LABEL_PREFIX)) {
-        throw new InvalidDialogueException("did not find label");
+      Match match = LABEL_REGEX.Match(trimLine);
+      if (match.Success) {
+        return parseLabel(match);
       }
 
-      List<String> labelData = trimLine.Substring(LABEL_PREFIX.Length).TrimStart().Split(':', StringSplitOptions.TrimEntries).ToList<String>();
-      if (labelData.Count < 2) {
-        throw new InvalidDialogueException("label does not contain description");
-      }
-      
-      Label result = new Label();
-      result.name = labelData[0];
-      result.description = labelData[1];
-
-      return result;
+      throw new InvalidDialogueException("not a label");
     }
 
     private ASTNode parseNode(String line) {
@@ -83,8 +89,8 @@ namespace parser {
 
     private Label parseLabel(Match match) {
       Label result = new Label();
-      result.name = match.Groups[0].Value;
-      result.description = match.Groups[1].Value;
+      result.name = match.Groups[1].Value;
+      result.description = match.Groups[2].Value;
       return result;
     }
 
@@ -113,9 +119,9 @@ namespace parser {
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on dynamic lock '" + lockContent + "'");
       }
-      List<String> locks = match.Groups[0].Value.Split(',', StringSplitOptions.TrimEntries).ToList();
+      List<String> locks = match.Groups[1].Value.Split(',', StringSplitOptions.TrimEntries).ToList();
       result.locks = locks;
-      result.passLabel = match.Groups[1].Value.Trim();
+      result.passLabel = match.Groups[2].Value.Trim();
       return result;
     }
 
@@ -129,16 +135,16 @@ namespace parser {
         throw new InvalidDialogueException("Invalid syntax on dynamic lock '" + lockContent + "'");
       }
 
-      result.requirements = match.Groups[0].Value.Split(',', StringSplitOptions.TrimEntries).ToList();
-      result.passLabel = match.Groups[1].Value.Trim();
-      result.failLabel = match.Groups[2].Value.Trim();
+      result.requirements = match.Groups[1].Value.Split(',', StringSplitOptions.TrimEntries).ToList();
+      result.passLabel = match.Groups[2].Value.Trim();
+      result.failLabel = match.Groups[3].Value.Trim();
       return result;
     }
 
     private DialogueNode parseDialogueNode(Match match) {
       DialogueNode result = new DialogueNode();
-      String speaker = match.Groups[0].Value.Trim();
-      String dialogue = match.Groups[1].Value.Trim();
+      String speaker = match.Groups[1].Value.Trim();
+      String dialogue = match.Groups[2].Value.Trim();
       result.speaker = speaker;
       result.dialogue = dialogue;
       return result;
@@ -151,7 +157,7 @@ namespace parser {
         throw new InvalidDialogueException("Invalid syntax on jump node '" + line + "'");
       }
 
-      res.label = match.Groups[0].Value.Trim();
+      res.label = match.Groups[1].Value.Trim();
       return res;
     }
 
@@ -162,7 +168,7 @@ namespace parser {
         throw new InvalidDialogueException("Invalid syntax on unlock node '" + line + "'");
       }
 
-      res.unlockName = match.Groups[0].Value.Trim();
+      res.unlockName = match.Groups[1].Value.Trim();
       return res;
     }
 
@@ -173,7 +179,7 @@ namespace parser {
         throw new InvalidDialogueException("Invalid syntax on lock node '" + line + "'");
       }
 
-      res.lockName = match.Groups[0].Value.Trim();
+      res.lockName = match.Groups[1].Value.Trim();
       return res;
     }
 
@@ -191,7 +197,7 @@ namespace parser {
 
     private static Regex LABEL_REGEX = new Regex(@"^\s*#\s*([\w\s-]+)\s*:\s*([\w\s-]+)$");
     private static Regex DIALOGUE_REGEX = new Regex(@"^\s*([\w\s-]+)\s*:\s*([\w\s-]+)$");
-    private static Regex BRANCH_REGEX = new Regex(@"^\s*([\w\s-]+)((\|[\w\s-]+)*)$");
+    private static Regex BRANCH_REGEX = new Regex(@"^\s*([^\|]+)((\|[^\|]+)+)$");
     private static Regex STATIC_LOCK_REGEX = new Regex(@"\(\s*([\w\s-]+\s*(?:\,[\w\s-]+)*)\s*:\s*([\w\s-]+)\)");
     private static Regex DYNAMIC_LOCK_REGEX = new Regex(@"\[\s*([\w\s-]+(?:\,\s*[\w\s-]+)*)\s*\?\s*([\w\s-]+)\s*:([\w\s-]+)\s*\]");
     private static Regex JUMP_REGEX = new Regex(@"^\^([\w\s-]+)$");

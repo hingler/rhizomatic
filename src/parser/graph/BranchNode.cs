@@ -5,6 +5,10 @@ namespace parser {
     */
     class BranchNode : ASTNode {
       public List<ASTNode> branches = new List<ASTNode>();
+
+      override public void accept(visitor.DialogueVisitor v) {
+        v.visit(this);
+      }
     }
   }
 }

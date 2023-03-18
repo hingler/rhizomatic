@@ -6,6 +6,10 @@ namespace parser {
     class Label : LinkingNode {
       public String name = "";
       public String description = "";
+
+      override public void accept(visitor.DialogueVisitor v) {
+        v.visit(this);
+      }
     }
   }
 }

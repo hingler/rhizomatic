@@ -1,0 +1,21 @@
+# sample label : sample description
+
+char1: what are you doing in my house
+char2: checking the temperature
+a|b|(test1, test2, test3 : StaticLockTest)
+
+# a : new destination
+char1: i just discovered a new type of irony
+char2: shut the fuck up
+c|[lock1, lock2, lock3 ? DynamicLockPass : DynamicLockFail]
+
+# StaticLockTest : holy shit
+char1: i think im in love with you
+char2: in expressing this youve ruined everything i liked about you
+char2: please can you get out of my life
+>testlock<
+
+# final : last encounter
+char1: i will never use a towel again
+char2: i think i need to throw up
+<living human being>

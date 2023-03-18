@@ -6,6 +6,10 @@ namespace parser {
     class DialogueNode : LinkingNode {
       public String speaker = "";
       public String dialogue = "";
+
+      override public void accept(visitor.DialogueVisitor v) {
+        v.visit(this);
+      }
     }
   }
 }
