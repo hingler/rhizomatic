@@ -1,8 +1,10 @@
-namespace graph {
-  /**
-   *  Base for all AST nodes.
-   */
-  class ASTNode {
+namespace parser {
+  namespace graph {
+    /**
+    *  Base for all AST nodes.
+    */
+    class ASTNode {
 
+    }
   }
 }

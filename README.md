@@ -12,9 +12,7 @@ lines represent individual statements
 labels are written like markdown header/subheader
 
 ```
-# label name
-
-## optional label description
+# {label name} : {label description}
 ```
 
 in certain contexts (ie branches), label description is exposed
@@ -39,7 +37,7 @@ static locks are designed to be hidden unless a certain series of checks pass; t
 these can be substituted into branch statements.
 
 ```
-{Label}({LockName1}, {LockName2}, ...)
+({LockName1}, {LockName2}, ... : {Label})
 ```
 
 ### dynamic lock

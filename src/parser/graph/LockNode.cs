@@ -1,5 +1,7 @@
-namespace graph {
-  class LockNode : ASTNode {
-    public String lockName = "";
+namespace parser {
+  namespace graph {
+    class LockNode : LinkingNode {
+      public String lockName = "";
+    }
   }
 }
