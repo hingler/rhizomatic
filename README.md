@@ -8,13 +8,6 @@ it's small so might as well put it here
 
 lines represent individual statements
 
-### text
-text spoken by a particular character.
-
-```
-{speaker}: {dialogue}
-```
-
 ### label
 labels are written like markdown header/subheader
 
@@ -25,6 +18,13 @@ labels are written like markdown header/subheader
 ```
 
 in certain contexts (ie branches), label description is exposed
+
+### text
+text spoken by a particular character.
+
+```
+{speaker}: {dialogue}
+```
 
 ### branch
 branches represent points at which the client can specify one of a series of choices, specified by label names
@@ -61,6 +61,10 @@ a jump places dialogue at the specified label. useful for ending a dialogue sequ
 ```
 ^{Label}
 ```
+
+labels mark the start of a new dialogue sequence, and correspondingly terminate the previous dialogue sequence.
+
+labels are also communicated between files :3
 
 ### unlock
 in some cases (ex. if the player passes a dynamic lock) we may want to unlock a relevant lock within the sequence without having to communicate with external code. this statement marks a given lock as "unlocked"
