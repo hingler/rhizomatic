@@ -8,11 +8,12 @@ namespace label {
     private Dictionary<String, Label> _labels = new Dictionary<String, Label>();
 
     public void AddLabel(Label label) {
+      Console.WriteLine("added label `" + label.name + "`");
       _labels[label.name] = label;
     }
 
     public Label? GetLabel(String name) {
-      return _labels[name];
+      return _labels.ContainsKey(name) ? _labels[name] : null;
     }
   }
 }

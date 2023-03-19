@@ -39,20 +39,23 @@ namespace events {
 
         private void handleBranch(ASTNode node) {
           Label? destination = null;
+          String labelName = "";
           bool dynamic = false;
           if (node is JumpNode) {
-            destination = labels.GetLabel((node as JumpNode)!.label);
+            labelName = (node as JumpNode)!.label;
           } else if (node is StaticLock) {
             // we'd need to test this lock, and add it only if it's a valid path to take
             // for now, assume true
-            destination = labels.GetLabel((node as StaticLock)!.passLabel);
+            labelName = (node as StaticLock)!.passLabel;
           } else if (node is DynamicLock) {
-            destination = labels.GetLabel((node as DynamicLock)!.passLabel);
+            labelName = (node as DynamicLock)!.passLabel;
             dynamic = true;
           }
 
+          destination = labels.GetLabel(labelName);
+
           if (destination == null) {
-            throw new InvalidDialogueException("Branch jumps to a node which does not exist");
+            throw new InvalidDialogueException("Branch jumps to label `" + labelName + "` which does not exist");
           }
 
           branchDescriptions_.Add(destination.description);

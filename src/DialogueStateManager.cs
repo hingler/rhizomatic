@@ -15,11 +15,11 @@ class DialogueStateManager {
 
   private ASTNode? currentNode = null;
 
-  void AddLabel(Label label) {
+  public void AddLabel(Label label) {
     map.AddLabel(label);
   }
 
-  void registerDialogueEventListener(DialogueEventListener? listener) {
+  public void RegisterDialogueEventListener(DialogueEventListener? listener) {
     this.listener = listener;
   }
 

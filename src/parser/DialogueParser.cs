@@ -13,7 +13,7 @@ namespace parser {
 
     private int idCounter = 0;
     public List<Label> visitDialogue(String path) {
-      DialogueFileReader reader = new DialogueFileReader(path);
+      DialogueFileReader reader = DialogueFileReader.fromFile(path);
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
     
@@ -90,8 +90,8 @@ namespace parser {
 
     private Label parseLabel(Match match) {
       Label result = new Label(idCounter++);
-      result.name = match.Groups[1].Value;
-      result.description = match.Groups[2].Value;
+      result.name = match.Groups[1].Value.Trim();
+      result.description = match.Groups[2].Value.Trim();
       return result;
     }
 
