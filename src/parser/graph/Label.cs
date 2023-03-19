@@ -7,6 +7,8 @@ namespace parser {
       public String name = "";
       public String description = "";
 
+      public Label(int id) : base(id) {}
+
       override public void accept(visitor.DialogueVisitor v) {
         v.visit(this);
       }
