@@ -58,6 +58,8 @@ class DialogueStateManager {
         currentNode = (currentNode as LinkingNode)!.next;
         UpdateCurrentNode();
       }
+    } else {
+      listener?.onDialogueEnd();
     }
   }
 
@@ -65,12 +67,7 @@ class DialogueStateManager {
   // the event impls themselves will track state, and inform us which model we want to visit next
   public void AdvanceDialogueState(ASTNode? node) {
     // use null to specify the end of a sequence
-    if (node == null) {
-      currentNode = null;
-      listener?.onDialogueEnd();
-    } else {
-      currentNode = node;
-      UpdateCurrentNode();
-    }
+    currentNode = node;
+    UpdateCurrentNode();
   }
 }

@@ -30,6 +30,7 @@ public class SampleEventListener : DialogueEventListener {
   public void onDialogueEnd()
   {
     Console.WriteLine("ended:)");
+    // todo: lock/unlock dont seem to be handled correctly atm
     
   }
 
