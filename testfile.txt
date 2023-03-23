@@ -9,6 +9,12 @@ char1: i just discovered a new type of irony
 char2: shut the fuck up
 c|[lock1, lock2, lock3 ? DynamicLockPass : DynamicLockFail]
 
+# b : grape planet
+char1: do you want to invent something
+char2: not really i am busy playing xbox
+char1: you make me so hot and bothered
+char2: i open emergency door at 32k ft causing explosive decompression and catastrophic damage
+
 # StaticLockTest : holy shit
 char1: i think im in love with you
 char2: in expressing this youve ruined everything i liked about you

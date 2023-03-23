@@ -5,6 +5,8 @@ namespace parser {
 
       public String passLabel = "";
 
+      public StaticLock(int id) : base(id) {}
+
       override public void accept(visitor.DialogueVisitor v) {
         v.visit(this);
       }

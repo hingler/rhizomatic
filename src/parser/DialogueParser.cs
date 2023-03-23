@@ -10,8 +10,10 @@ namespace parser {
     // for this: thinking that we read line by line in visitor
     // and construct nodes as we go
     // (we're fortunate that nodes can snag an entire line and handle it in isolation)
+
+    private int idCounter = 0;
     public List<Label> visitDialogue(String path) {
-      DialogueFileReader reader = new DialogueFileReader(path);
+      DialogueFileReader reader = DialogueFileReader.fromFile(path);
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
     
@@ -19,7 +21,6 @@ namespace parser {
         Label label = getNextLabel(reader.nextLine());
         ASTNode currentNode = label;
         while (reader.hasContent()) {
-          Console.WriteLine("looping");
           LinkingNode? currentLinkingNode = currentNode as LinkingNode;
           if (currentLinkingNode != null) {
             String line = reader.peekLine();
@@ -88,14 +89,14 @@ namespace parser {
     }
 
     private Label parseLabel(Match match) {
-      Label result = new Label();
-      result.name = match.Groups[1].Value;
-      result.description = match.Groups[2].Value;
+      Label result = new Label(idCounter++);
+      result.name = match.Groups[1].Value.Trim();
+      result.description = match.Groups[2].Value.Trim();
       return result;
     }
 
     private BranchNode parseBranch(String line) {
-      BranchNode result = new BranchNode();
+      BranchNode result = new BranchNode(idCounter++);
       List<String> branchContent = line.Split('|', StringSplitOptions.TrimEntries).ToList<String>();
       foreach (String label in branchContent) {
         // see if this label is a dynamic or static lock
@@ -105,7 +106,7 @@ namespace parser {
         } else if (labelContent[0] == STATIC_LOCK_INIT) {
           result.branches.Add(parseStaticLock(labelContent));
         } else {
-          JumpNode jump = new JumpNode();
+          JumpNode jump = new JumpNode(idCounter++);
           jump.label = labelContent;
           result.branches.Add(jump);
         }
@@ -114,7 +115,7 @@ namespace parser {
     }
 
     private StaticLock parseStaticLock(String lockContent) {
-      StaticLock result = new StaticLock();
+      StaticLock result = new StaticLock(idCounter++);
       Match match = STATIC_LOCK_REGEX.Match(lockContent);
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on dynamic lock '" + lockContent + "'");
@@ -126,7 +127,7 @@ namespace parser {
     }
 
     private DynamicLock parseDynamicLock(String lockContent) {
-      DynamicLock result = new DynamicLock();
+      DynamicLock result = new DynamicLock(idCounter++);
       Match match = DYNAMIC_LOCK_REGEX.Match(lockContent);
       // 0: dedupes
       // 1: pass
@@ -142,7 +143,7 @@ namespace parser {
     }
 
     private DialogueNode parseDialogueNode(Match match) {
-      DialogueNode result = new DialogueNode();
+      DialogueNode result = new DialogueNode(idCounter++);
       String speaker = match.Groups[1].Value.Trim();
       String dialogue = match.Groups[2].Value.Trim();
       result.speaker = speaker;
@@ -151,7 +152,7 @@ namespace parser {
     }
 
     private JumpNode parseJumpNode(String line) {
-      JumpNode res = new JumpNode();
+      JumpNode res = new JumpNode(idCounter++);
       Match match = JUMP_REGEX.Match(line);
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on jump node '" + line + "'");
@@ -162,7 +163,7 @@ namespace parser {
     }
 
     private UnlockNode parseUnlockNode(String line) {
-      UnlockNode res = new UnlockNode();
+      UnlockNode res = new UnlockNode(idCounter++);
       Match match = UNLOCK_REGEX.Match(line);
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on unlock node '" + line + "'");
@@ -173,7 +174,7 @@ namespace parser {
     }
 
     private LockNode parseLockNode(String line) {
-      LockNode res = new LockNode();
+      LockNode res = new LockNode(idCounter++);
       Match match = LOCK_REGEX.Match(line);
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on lock node '" + line + "'");

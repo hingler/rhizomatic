@@ -3,8 +3,13 @@ namespace parser {
     class DialogueFileReader {
       private List<String> content;
       public int offset = 0;
-      public DialogueFileReader(String path) {
+
+      public static DialogueFileReader fromFile(String path) {
         String content = System.IO.File.ReadAllText(path);
+        return new DialogueFileReader(content);
+      }
+
+      public DialogueFileReader(String content) { 
         this.content = content.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList<String>();
       }
 
