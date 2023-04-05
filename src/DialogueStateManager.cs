@@ -11,16 +11,16 @@ using events;
 class DialogueStateManager {
   private LabelMap map = new LabelMap();
 
-  private DialogueEventListener? listener = null;
+  private DialogueEventListener listener;
 
   private ASTNode? currentNode = null;
 
-  public void AddLabel(Label label) {
-    map.AddLabel(label);
+  public DialogueStateManager(DialogueEventListener listener) {
+    this.listener = listener;
   }
 
-  public void RegisterDialogueEventListener(DialogueEventListener? listener) {
-    this.listener = listener;
+  public void AddLabel(Label label) {
+    map.AddLabel(label);
   }
 
   /**

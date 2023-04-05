@@ -12,8 +12,7 @@ namespace parser {
     // (we're fortunate that nodes can snag an entire line and handle it in isolation)
 
     private int idCounter = 0;
-    public List<Label> visitDialogue(String path) {
-      DialogueFileReader reader = DialogueFileReader.fromFile(path);
+    public List<Label> visitDialogue(DialogueFileReader reader) {
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
     
