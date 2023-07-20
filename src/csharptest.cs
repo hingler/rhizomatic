@@ -24,8 +24,6 @@ namespace hellobusiness {
       SampleEventListener listener = new SampleEventListener();
       manager.RegisterDialogueEventListener(listener);
       manager.StartSequence("ridiculoustest");
-
-      manager.StartSequence(labels[0].name);
     }
 
     /**

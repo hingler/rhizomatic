@@ -24,13 +24,13 @@ namespace parser {
       // TODO: should probably separate, but keeping as is to handle ID
       if (path.EndsWith(".jumptable")) {
         // jumptable, handle separately
-        return visitJumpTable(reader);
+        return visitJumpTable(reader, new FileInfo(path).Name.Split(".")[0]);
       } else {
         return visitDialogue(reader);
       }
     }
 
-    public List<Label> visitJumpTable(DialogueFileReader reader) {
+    public List<Label> visitJumpTable(DialogueFileReader reader, String labelName) {
       Label rootLabel = new Label(idCounter++);
       JumpTableNode jumpLabelNode = new JumpTableNode(idCounter++, _stateManager);
       while (reader.hasContent()) {
@@ -43,7 +43,7 @@ namespace parser {
 
       rootLabel.next = jumpLabelNode;
       // tba: need to fix this
-      rootLabel.name = new FileInfo("temp.txt").Name.Split('.')[0];
+      rootLabel.name = labelName;
       rootLabel.description = "jumptable";
       List<Label> labelList = new List<Label>();
       labelList.Add(rootLabel);
@@ -241,6 +241,5 @@ namespace parser {
     private static Regex LOCK_REGEX = new Regex(@"^<([\w\s-]+)>$");
 
     private static Regex JUMP_LABEL_REGEX = new Regex(@"^\((.*)\)\s*->\s*([A-Za-z0-9\s]+)$");
-    private static Regex FILE_NAME_REGEX = new Regex(@"([^\.\/\\]+)\.[^\.]+$");
   }
 }
