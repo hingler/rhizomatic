@@ -13,14 +13,16 @@ public class DialogueInitializer {
 
   // read at any point, add text files in the middle of reading
   private DialogueStateManager stateManager;
-  private DialogueParser parser = new DialogueParser();
+  private DialogueParser parser;
 
   public DialogueInitializer(DialogueEventListener listener) {
-    this.stateManager = new DialogueStateManager(listener);
+    this.stateManager = new DialogueStateManager();
+    this.parser = new DialogueParser(stateManager);
+    this.stateManager.RegisterDialogueEventListener(listener);
   }
 
   public void addDialogue(String dialogue) {
-    DialogueFileReader reader = new DialogueFileReader(dialogue);
+    DialogueFileReader reader = new DialogueFileReader(dialogue, "inplace");
     List<Label> labels = parser.visitDialogue(reader);
     foreach (Label label in labels) {
       stateManager.AddLabel(label);
