@@ -13,10 +13,15 @@ namespace events {
 
         private bool advanced_ = false;
 
-        public DynamicLockHandleImpl(DialogueStateManager manager, LabelMap map, DynamicLock dynamicLock) {
+        public String speaker_;
+
+        public String speaker => speaker_;
+
+        public DynamicLockHandleImpl(DialogueStateManager manager, LabelMap map, DynamicLock dynamicLock, String speaker) {
           this.dynamicLock = dynamicLock;
           this.map = map;
           this.manager = manager;
+          this.speaker_ = speaker;
         }
 
         public void advance(params String[] dedupes) {

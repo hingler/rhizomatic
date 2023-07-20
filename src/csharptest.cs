@@ -7,7 +7,6 @@ using parser.reader;
 
 namespace hellobusiness {
   class Test {
-
     static public void Main(String[] args) {
       DialogueParser parser = new DialogueParser();
       List<Label> labels = parser.visitDialogue(DialogueFileReader.fromFile("testfile.txt"));

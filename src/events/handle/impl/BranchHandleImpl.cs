@@ -13,11 +13,15 @@ namespace events {
 
         private List<bool> visited_ = new List<bool>();
 
+        private String speaker_;
+
         public IReadOnlyList<string> branchDescriptions => branchDescriptions_;
 
         public IReadOnlyList<bool> isDynamicLock => isDynamicLock_;
 
         public IReadOnlyList<bool> visited => visited_;
+
+        public String speaker => speaker_;
 
         private DialogueStateManager manager;
 
@@ -27,10 +31,11 @@ namespace events {
 
         private bool advanced_ = false;
 
-        public BranchHandleImpl(DialogueStateManager manager, BranchNode node, LabelMap labels) {
+        public BranchHandleImpl(DialogueStateManager manager, BranchNode node, LabelMap labels, String speaker) {
           this.manager = manager;
           this.branchNode = node;
           this.labels = labels;
+          this.speaker_ = speaker;
 
           foreach (ASTNode branch in node.branches) {
             handleBranch(branch);

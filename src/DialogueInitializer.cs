@@ -27,8 +27,8 @@ public class DialogueInitializer {
     }
   }
 
-  public void startDialogue(String labelName) {
+  public bool startDialogue(String labelName) {
     // tba: mid-sequence handling, etc.
-    stateManager.StartSequence(labelName);
+    return stateManager.StartSequence(labelName);
   }
 }

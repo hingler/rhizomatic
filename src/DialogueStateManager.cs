@@ -15,6 +15,8 @@ class DialogueStateManager {
 
   private ASTNode? currentNode = null;
 
+  private String lastSpeaker = "";
+
   public DialogueStateManager(DialogueEventListener listener) {
     this.listener = listener;
   }
@@ -43,13 +45,14 @@ class DialogueStateManager {
       Type t = currentNode.GetType();
 
       if (currentNode is BranchNode) {
-        BranchHandleImpl branchHandler = new BranchHandleImpl(this, (currentNode as BranchNode)!, map);
+        BranchHandleImpl branchHandler = new BranchHandleImpl(this, (currentNode as BranchNode)!, map, lastSpeaker);
         listener?.onBranch(branchHandler);
       } else if (currentNode is DialogueNode) {
+        lastSpeaker = ((DialogueNode)currentNode).speaker;
         DialogueHandleImpl dialogueHandler = new DialogueHandleImpl(this, (currentNode as DialogueNode)!);
         listener?.onDialogue(dialogueHandler);
       } else if (currentNode is DynamicLock) {
-        DynamicLockHandleImpl dynamicLockHandle = new DynamicLockHandleImpl(this, map, (currentNode as DynamicLock)!);
+        DynamicLockHandleImpl dynamicLockHandle = new DynamicLockHandleImpl(this, map, (currentNode as DynamicLock)!, lastSpeaker);
         listener?.onDynamicLock(dynamicLockHandle);
       } else if (currentNode is JumpNode) {
         currentNode = map.GetLabel((currentNode as JumpNode)!.label);
