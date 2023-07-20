@@ -7,21 +7,21 @@ namespace hellobusiness {
   class Test {
 
     static public void Main(String[] args) {
-      DialogueParser parser = new DialogueParser();
-      List<Label> labels = parser.visitDialogue("testfile.txt");
-      visitor.DebugVisitor visitor = new visitor.DebugVisitor();
       DialogueStateManager manager = new DialogueStateManager();
+      DialogueParser parser = new DialogueParser(manager);
+      List<Label> labels = parser.visitDialogue("testfile.txt");
+      Console.WriteLine(labels.Count());
+      labels.AddRange(parser.visitDialogue("ridiculoustest.jumptable"));
+      Console.WriteLine(labels.Count());
+      visitor.DebugVisitor visitor = new visitor.DebugVisitor();
       foreach (Label label in labels) {
         visitor.visit(label);
         manager.AddLabel(label);
-
-
       }
 
       SampleEventListener listener = new SampleEventListener();
       manager.RegisterDialogueEventListener(listener);
-
-      manager.StartSequence(labels[0].name);
+      manager.StartSequence("ridiculoustest");
     }
 
     /**

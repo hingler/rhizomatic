@@ -6,8 +6,8 @@ a|b|(test1, test2, test3 : StaticLockTest)
 
 # a : new destination
 char1: i just discovered a new type of irony
-char2: shut the fuck up
-c|[lock1, lock2, lock3 ? DynamicLockPass : DynamicLockFail]
+char2: shut the fuck upasd
+StaticLockTest|[lock1, lock2, lock3 ? DynamicLockPass : DynamicLockFail]
 
 # b : grape planet
 char1: do you want to invent something
@@ -20,6 +20,14 @@ char1: i think im in love with you
 char2: in expressing this youve ruined everything i liked about you
 char2: please can you get out of my life
 >testlock<
+
+# DynamicLockPass : win
+char1: nice job you win
+char2: i will never forget what you did for me
+
+# DynamicLockFail : fail
+char1: not cool bro
+char2: i will never live this down
 
 # final : last encounter
 char1: i will never use a towel again

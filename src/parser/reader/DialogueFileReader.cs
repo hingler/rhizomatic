@@ -5,6 +5,7 @@ namespace parser {
       public int offset = 0;
 
       public static DialogueFileReader fromFile(String path) {
+        // TODO: handle failure gracefully
         String content = System.IO.File.ReadAllText(path);
         return new DialogueFileReader(content);
       }
