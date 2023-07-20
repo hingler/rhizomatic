@@ -2,15 +2,17 @@ using System;
 using parser;
 using parser.graph;
 
+using parser.reader;
+
 
 namespace hellobusiness {
   class Test {
-
     static public void Main(String[] args) {
       DialogueParser parser = new DialogueParser();
-      List<Label> labels = parser.visitDialogue("testfile.txt");
+      List<Label> labels = parser.visitDialogue(DialogueFileReader.fromFile("testfile.txt"));
       visitor.DebugVisitor visitor = new visitor.DebugVisitor();
-      DialogueStateManager manager = new DialogueStateManager();
+      SampleEventListener listener = new SampleEventListener();
+      DialogueStateManager manager = new DialogueStateManager(listener);
       foreach (Label label in labels) {
         visitor.visit(label);
         manager.AddLabel(label);
@@ -18,8 +20,6 @@ namespace hellobusiness {
 
       }
 
-      SampleEventListener listener = new SampleEventListener();
-      manager.RegisterDialogueEventListener(listener);
 
       manager.StartSequence(labels[0].name);
     }

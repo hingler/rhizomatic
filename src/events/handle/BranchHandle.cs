@@ -1,6 +1,6 @@
 namespace events {
   namespace handle {
-    public interface BranchHandle {
+    public interface BranchHandle: Handle {
 
       // front facing descriptions for branches
       IReadOnlyList<String> branchDescriptions { get; }
