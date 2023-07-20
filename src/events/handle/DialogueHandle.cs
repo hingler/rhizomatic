@@ -1,7 +1,6 @@
 namespace events {
   namespace handle {
-    public interface DialogueHandle {
-      String speaker { get; }
+    public interface DialogueHandle: Handle {
       String dialogue { get; }
 
       /**

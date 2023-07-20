@@ -2,16 +2,18 @@ using System;
 using parser;
 using parser.graph;
 
+using parser.reader;
+
 
 namespace hellobusiness {
   class Test {
-
     static public void Main(String[] args) {
+
       DialogueStateManager manager = new DialogueStateManager();
       DialogueParser parser = new DialogueParser(manager);
-      List<Label> labels = parser.visitDialogue("testfile.txt");
+      List<Label> labels = parser.visitDialogue(DialogueFileReader.fromFile("testfile.txt"));
       Console.WriteLine(labels.Count());
-      labels.AddRange(parser.visitDialogue("ridiculoustest.jumptable"));
+      labels.AddRange(parser.visitDialogueFile("ridiculoustest.jumptable"));
       Console.WriteLine(labels.Count());
       visitor.DebugVisitor visitor = new visitor.DebugVisitor();
       foreach (Label label in labels) {
@@ -22,6 +24,8 @@ namespace hellobusiness {
       SampleEventListener listener = new SampleEventListener();
       manager.RegisterDialogueEventListener(listener);
       manager.StartSequence("ridiculoustest");
+
+      manager.StartSequence(labels[0].name);
     }
 
     /**

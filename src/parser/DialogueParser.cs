@@ -19,18 +19,18 @@ namespace parser {
       _stateManager = stateManager;
     }
 
-    public List<Label> visitDialogue(String path) {
+    public List<Label> visitDialogueFile(String path) {
+      DialogueFileReader reader = DialogueFileReader.fromFile(path);
       // TODO: should probably separate, but keeping as is to handle ID
       if (path.EndsWith(".jumptable")) {
         // jumptable, handle separately
-        return visitJumpTableFile(path);
+        return visitJumpTable(reader);
       } else {
-        return visitDialogueFile(path);
+        return visitDialogue(reader);
       }
     }
 
-    public List<Label> visitJumpTableFile(String path) {
-      DialogueFileReader reader = DialogueFileReader.fromFile(path);
+    public List<Label> visitJumpTable(DialogueFileReader reader) {
       Label rootLabel = new Label(idCounter++);
       JumpTableNode jumpLabelNode = new JumpTableNode(idCounter++, _stateManager);
       while (reader.hasContent()) {
@@ -42,15 +42,15 @@ namespace parser {
       }
 
       rootLabel.next = jumpLabelNode;
-      rootLabel.name = new FileInfo(path).Name.Split('.')[0];
+      // tba: need to fix this
+      rootLabel.name = new FileInfo("temp.txt").Name.Split('.')[0];
       rootLabel.description = "jumptable";
       List<Label> labelList = new List<Label>();
       labelList.Add(rootLabel);
       return labelList;
     }
 
-    public List<Label> visitDialogueFile(String path) {
-      DialogueFileReader reader = DialogueFileReader.fromFile(path);
+    public List<Label> visitDialogue(DialogueFileReader reader) {
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
     

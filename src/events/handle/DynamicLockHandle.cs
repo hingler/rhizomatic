@@ -3,7 +3,7 @@ namespace events {
     /**
      *  Represents a dynamic lock, which requires user input
      */
-    public interface DynamicLockHandle {
+    public interface DynamicLockHandle: Handle {
 
       /**
        *  Provide a list of dedupes to advance this handle.
