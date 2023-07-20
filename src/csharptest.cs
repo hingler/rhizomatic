@@ -8,20 +8,22 @@ using parser.reader;
 namespace hellobusiness {
   class Test {
     static public void Main(String[] args) {
-      DialogueParser parser = new DialogueParser();
+
+      DialogueStateManager manager = new DialogueStateManager();
+      DialogueParser parser = new DialogueParser(manager);
       List<Label> labels = parser.visitDialogue(DialogueFileReader.fromFile("testfile.txt"));
+      Console.WriteLine(labels.Count());
+      labels.AddRange(parser.visitDialogueFile("ridiculoustest.jumptable"));
+      Console.WriteLine(labels.Count());
       visitor.DebugVisitor visitor = new visitor.DebugVisitor();
-      SampleEventListener listener = new SampleEventListener();
-      DialogueStateManager manager = new DialogueStateManager(listener);
       foreach (Label label in labels) {
         visitor.visit(label);
         manager.AddLabel(label);
-
-
       }
 
-
-      manager.StartSequence(labels[0].name);
+      SampleEventListener listener = new SampleEventListener();
+      manager.RegisterDialogueEventListener(listener);
+      manager.StartSequence("ridiculoustest");
     }
 
     /**

@@ -13,7 +13,7 @@ namespace visitor {
 
     public void visit(DynamicLock node);
 
-    public void visit(JumpNode node);
+    public void visit(IJumpNode node);
 
     public void visit(Label label);
 

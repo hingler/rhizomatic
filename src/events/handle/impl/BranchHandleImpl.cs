@@ -46,12 +46,21 @@ namespace events {
           Label? destination = null;
           String labelName = "";
           bool dynamic = false;
-          if (node is JumpNode) {
-            labelName = (node as JumpNode)!.label;
+          if (node is IJumpNode) {
+            labelName = (node as IJumpNode)!.label;
           } else if (node is StaticLock) {
             // we'd need to test this lock, and add it only if it's a valid path to take
             // for now, assume true
-            labelName = (node as StaticLock)!.passLabel;
+            // (TODO: static lock receives state manager, return prematurely if test fails)
+            StaticLock staticLock = (node as StaticLock)!;
+            labelName = staticLock.passLabel;
+            for (int i = 0; i < staticLock.locks.Count(); i++) {
+              string lockName = staticLock.locks[i];
+              if (!manager.IsUnlocked(lockName)) {
+                // locked, do not add
+                return;
+              }
+            }
           } else if (node is DynamicLock) {
             labelName = (node as DynamicLock)!.passLabel;
             dynamic = true;

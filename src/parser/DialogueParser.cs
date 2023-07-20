@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 namespace parser {
   using reader;
   using graph;
+  using graph.jumptable;
   /**
    *  Visits dialogue items
    */
@@ -12,6 +13,43 @@ namespace parser {
     // (we're fortunate that nodes can snag an entire line and handle it in isolation)
 
     private int idCounter = 0;
+    private DialogueStateManager _stateManager;
+
+    public DialogueParser(DialogueStateManager stateManager) {
+      _stateManager = stateManager;
+    }
+
+    public List<Label> visitDialogueFile(String path) {
+      DialogueFileReader reader = DialogueFileReader.fromFile(path);
+      // TODO: should probably separate, but keeping as is to handle ID
+      if (path.EndsWith(".jumptable")) {
+        // jumptable, handle separately
+        return visitJumpTable(reader, new FileInfo(path).Name.Split(".")[0]);
+      } else {
+        return visitDialogue(reader);
+      }
+    }
+
+    public List<Label> visitJumpTable(DialogueFileReader reader, String labelName) {
+      Label rootLabel = new Label(idCounter++);
+      JumpTableNode jumpLabelNode = new JumpTableNode(idCounter++, _stateManager);
+      while (reader.hasContent()) {
+        string jumpString = reader.nextLine();
+        Match match = JUMP_LABEL_REGEX.Match(jumpString);
+        List<string> lockList = match.Groups[1].Value.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList<string>();
+        string passLabel = match.Groups[2].Value.Trim();
+        jumpLabelNode.AddLabel(lockList, passLabel);
+      }
+
+      rootLabel.next = jumpLabelNode;
+      // tba: need to fix this
+      rootLabel.name = labelName;
+      rootLabel.description = "jumptable";
+      List<Label> labelList = new List<Label>();
+      labelList.Add(rootLabel);
+      return labelList;
+    }
+
     public List<Label> visitDialogue(DialogueFileReader reader) {
       List<Label> res = new List<Label>();
       // convert to nodes per line, then connect???
@@ -105,8 +143,7 @@ namespace parser {
         } else if (labelContent[0] == STATIC_LOCK_INIT) {
           result.branches.Add(parseStaticLock(labelContent));
         } else {
-          JumpNode jump = new JumpNode(idCounter++);
-          jump.label = labelContent;
+          JumpNodeImpl jump = new JumpNodeImpl(idCounter++, labelContent);
           result.branches.Add(jump);
         }
       }
@@ -150,14 +187,13 @@ namespace parser {
       return result;
     }
 
-    private JumpNode parseJumpNode(String line) {
-      JumpNode res = new JumpNode(idCounter++);
+    private IJumpNode parseJumpNode(String line) {
       Match match = JUMP_REGEX.Match(line);
       if (!match.Success) {
         throw new InvalidDialogueException("Invalid syntax on jump node '" + line + "'");
       }
 
-      res.label = match.Groups[1].Value.Trim();
+      IJumpNode res = new JumpNodeImpl(idCounter++, match.Groups[1].Value.Trim());
       return res;
     }
 
@@ -203,5 +239,7 @@ namespace parser {
     private static Regex JUMP_REGEX = new Regex(@"^\^([\w\s-]+)$");
     private static Regex UNLOCK_REGEX = new Regex(@"^>([\w\s-]+)<$");
     private static Regex LOCK_REGEX = new Regex(@"^<([\w\s-]+)>$");
+
+    private static Regex JUMP_LABEL_REGEX = new Regex(@"^\((.*)\)\s*->\s*([A-Za-z0-9\s]+)$");
   }
 }

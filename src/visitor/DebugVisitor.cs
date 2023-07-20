@@ -30,7 +30,7 @@ namespace visitor {
       printLine("[DYNAMIC LOCK] (pass: " + node.passLabel + " // fail: " + node.failLabel + ")");
     }
 
-    public void visit(JumpNode node)
+    public void visit(IJumpNode node)
     {
       printLine("JUMP: " + node.label);
     }

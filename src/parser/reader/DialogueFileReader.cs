@@ -5,11 +5,17 @@ namespace parser {
       public int offset = 0;
 
       public static DialogueFileReader fromFile(String path) {
+        // TODO: handle failure gracefully
         String content = System.IO.File.ReadAllText(path);
         return new DialogueFileReader(content);
       }
 
-      public DialogueFileReader(String content) { 
+      /**
+       *  Creates new dialogue file reader
+       *  @param content - file content
+       *  @param fd - descriptor which identifies this file
+       */
+      public DialogueFileReader(String content) {
         this.content = content.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList<String>();
       }
 

@@ -11,18 +11,21 @@ using events;
 class DialogueStateManager {
   private LabelMap map = new LabelMap();
 
-  private DialogueEventListener listener;
+  private DialogueEventListener? listener = null;
 
   private ASTNode? currentNode = null;
 
   private String lastSpeaker = "";
+  private HashSet<string> lockSet = new HashSet<string>();
 
-  public DialogueStateManager(DialogueEventListener listener) {
-    this.listener = listener;
-  }
+  public DialogueStateManager() {}
 
   public void AddLabel(Label label) {
     map.AddLabel(label);
+  }
+
+  public void RegisterDialogueEventListener(DialogueEventListener? listener) {
+    this.listener = listener;
   }
 
   /**
@@ -40,10 +43,21 @@ class DialogueStateManager {
     return true;
   }
 
+  public bool IsUnlocked(string lockName) {
+    return lockSet.Contains(lockName);
+  }
+
+  public void Unlock(string lockName) {
+    lockSet.Add(lockName);
+  }
+
+  public void Lock(string lockName) {
+    lockSet.Remove(lockName);
+  }
+
   public void UpdateCurrentNode() {
     if (currentNode != null) {
       Type t = currentNode.GetType();
-
       if (currentNode is BranchNode) {
         BranchHandleImpl branchHandler = new BranchHandleImpl(this, (currentNode as BranchNode)!, map, lastSpeaker);
         listener?.onBranch(branchHandler);
@@ -54,15 +68,26 @@ class DialogueStateManager {
       } else if (currentNode is DynamicLock) {
         DynamicLockHandleImpl dynamicLockHandle = new DynamicLockHandleImpl(this, map, (currentNode as DynamicLock)!, lastSpeaker);
         listener?.onDynamicLock(dynamicLockHandle);
-      } else if (currentNode is JumpNode) {
-        currentNode = map.GetLabel((currentNode as JumpNode)!.label);
+      } else if (currentNode is IJumpNode) {
+        currentNode = map.GetLabel((currentNode as IJumpNode)!.label);
+        UpdateCurrentNode();
       } else if (currentNode is LinkingNode) {
         // temp default
-        currentNode = (currentNode as LinkingNode)!.next;
+        LinkingNode linkingNode = (currentNode as LinkingNode)!;
+        _HandleLinkingNode(linkingNode);
+        currentNode = linkingNode.next;
         UpdateCurrentNode();
       }
     } else {
       listener?.onDialogueEnd();
+    }
+  }
+
+  private void _HandleLinkingNode(LinkingNode node) {
+    if (node is UnlockNode) {
+      Unlock((node as UnlockNode)!.unlockName);
+    } else if (node is LockNode) {
+      Lock((node as LockNode)!.lockName);
     }
   }
 
@@ -73,4 +98,6 @@ class DialogueStateManager {
     currentNode = node;
     UpdateCurrentNode();
   }
+
+  // 7/19 - i feel like i know how to handle this better 
 }

@@ -76,3 +76,16 @@ hypothetically (not sure if i need it yet) a lock can be locked as well with:
 ```
 <{LockName}>
 ```
+
+## jumptable
+jumptables are designed to handle dialogue sequences more gracefully - file name is a label.
+when starting from a jumptable, entries are evaluated in order:
+
+```
+({StaticLock1}, {StaticLock2}, ...)  -> {Label}
+```
+
+the last passing entry is the one which is handled
+
+(TODO: does not gracefully handle branching, which is what re-locking a node is for - should be fine for now, but might get messier than i'm anticipating, somewhere down the line)
+((TODO2: does not handle failure gracefully, thrown exceptions will knock everything off the rails - resolve a little down the line i think, right now it's not necessary))
